@@ -1,75 +1,34 @@
 import React from 'react';
-import {
-    Map,
-    GoogleApiWrapper,
-    Marker,
-    InfoWindow,
-    Polygon,
-    Polyline,
-    Circle
-} from 'google-maps-react';
-
-const mapStyles = {
-    width: '100%',
-    height: '100%',
-};
+import CircleComponent  from "./Circle";
+import MarkerComponent from "./Markers";
+import PolygonComponent from "./Polygon";
+import PolylineComponent from "./Polyline";
+import SimpleMap from "./SimpleMap";
+import MapMix from "./Mix";
+// const mapStyles = {
+//     width: '100%',
+//     height: '100%',
+// };
 
 
 
-class MapDemo extends React.Component {
+export default class MapDemo extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            selectedPlace: {},
-            activeMarker: {},
-            showingInfoWindow: false,
-            showInfoWindow: 0,
-            selectedMarker: {},
-            x: 0,
-            y: 0,
-            myLocations: [
-                { lat: 23.05712, longi: 72.52005, place: "Ahmedbad", id: 4 },   //Ahmedabad
-                { lat: 19.01302, longi: 72.84465, place: "Dadra", id: 1 },      //Mumbai
-                { lat: 30.52901, longi: 77.30479, place: "Himachal", id: 2 },   //Himachal
-                { lat: 19.693558, longi: 72.765518, place: "Palghar", id: 3 },  //Palghar
-            ]
+            mapLocations: [
+                { lat: 23.05712, lng: 72.52005, place: "Ahmedbad", id: 4 },   //Ahmedabad
+                { lat: 19.693558, lng: 72.765518, place: "Palghar", id: 3 },
+                { lat: 19.01302, lng: 72.84465, place: "Dadra", id: 1 },    
+                { lat: 30.52901, lng: 77.30479, place: "Himachal", id: 2 },   //Himachal
+             
+            ],
+            handlePage : 0
         }
-        this.selectionOfMarker = this.selectionOfMarker.bind(this)
     }
 
 
-    selectionOfMarker = (props,marker,e) => {
-        console.log("Props Recieved ",props)
-        console.log("Selected Marker ", marker)
-        this.setState({
-            selectedPlace: props,
-            activeMarker: marker,
-            showingInfoWindow: true
-        })
-    }
-
-    onCloseInfoWindow = () => {
-        this.setState({
-            showInfoWindow: 0,
-            activeMarker: null
-        })
-    }
-
-    displayMarkers = () => {
-        return this.state.myLocations.map(location => {
-            return (
-                <Marker
-                    key={location.id}
-                    name={location.place}
-                    position={{
-                        lat: location.lat,
-                        lng: location.longi
-                    }}
-                    onClick={this.selectionOfMarker}
-                />
-            )
-        })
-    }
+   
 
     render() {
         const triangleCoords = [
@@ -84,77 +43,48 @@ class MapDemo extends React.Component {
         return (
             <div>
                 <h1> Map Demo </h1>
-                <button>Normal</button>
-                <button>circle</button>
-                <button>Polygon</button>
-                <button>PolyLine</button>
-                <button>Markers</button>
-
-                <Map
-                    google={this.props.google}
-                    zoom={6}
-                    className = {mapStyles}
-                    initialCenter={{ lat: 23.0225, lng: 72.5714 }}
-                >
-                    {this.displayMarkers()}
-
-                    <InfoWindow
-                            marker={this.state.activeMarker}
-                            visible={this.state.showingInfoWindow}
-                    >
-                        <div>
-                            <h1>
-                                {this.state.selectedPlace.name}
-                            </h1>
-                        </div>
-                    </InfoWindow>
-
-                    {/* //Polygon Code */}
-                    {/* <Polygon
-                        paths={triangleCoords}
-                        strokeColor="#0000FF"
-                        strokeOpacity={0.8}
-                        strokeWeight={2}
-                        fillColor="#0000FF"
-                        fillOpacity={0.35}
-                     /> */}
-
-
-                    {/* PloyLine Code */}
-                    {/* <Polyline
-                        path={triangleCoords}
-                        strokeColor="#0000FF"
-                        strokeOpacity={0.8}
-                        strokeWeight={2}
-                    /> */}
-
-
-                    {/* Circle Co-ordinates */}
-                    {/* <Circle
-                        radius={50000}
-                        center={roundCoords}
-                        onMouseover={() => console.log('mouseover')}
-                        onClick={() => console.log('click')}
-                        onMouseout={() => console.log('mouseout')}
-                        strokeColor='transparent'
-                        strokeOpacity={0}
-                        strokeWeight={5}
-                        fillColor='#FF0000'
-                        fillOpacity={0.4}
-                    /> */}
-
-
-                    {/* <Marker
-                        position={roundCoords}
-                    /> */}
-
-                </Map>
+                <button onClick = {() => this.setState({handlePage : 0})}>Normal</button>
+                <button onClick = {() => this.setState({handlePage : 1})}>circle</button>
+                <button onClick = {() => this.setState({handlePage : 2})}>Polygon</button>
+                <button onClick = {() => this.setState({handlePage : 3})}>PolyLine</button>
+                <button onClick = {() => this.setState({handlePage : 4})}>Markers</button>
+                <button onClick = {() => this.setState({handlePage : 5})}>MixMaps</button>
+                {
+                      this.state.handlePage === 1 &&
+                        <CircleComponent 
+                            data = {roundCoords}
+                        />   
+                }
+                {
+                    this.state.handlePage === 2 &&
+                    <PolygonComponent 
+                        data = {triangleCoords}
+                    />
+                }
+                {
+                    this.state.handlePage === 3 &&
+                    <PolylineComponent
+                        data = {triangleCoords}
+                    />
+                }
+                {
+                    this.state.handlePage === 4 &&
+                    <MarkerComponent
+                        data = {this.state.mapLocations}
+                    />  
+                }
+                {
+                    this.state.handlePage === 0 &&
+                       <SimpleMap />
+                }
+                {
+                    this.state.handlePage === 5 && 
+                    <MapMix
+                        data = {this.state.mapLocations}
+                    />
+                }
+               
             </div>
         )
     }
 }
-
-export default GoogleApiWrapper({
-    // apiKey: 'AIzaSyBNQVQPeg0gARKCWhsMpiXKedFvj5XdQX8'
-    apiKey: 'AIzaSyBjrlHW0uLCjMrCNSvkWBsM1NX9Q372Mvs'
-})(MapDemo);

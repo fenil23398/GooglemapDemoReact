@@ -14,20 +14,32 @@ const mapStyles = {
     height: '100%',
 };
 
-class CircleComponent extends React.Component {
+ class CircleComponent extends React.Component {
     render() {
         return (
-            <div>
-                <h1> Circle </h1>
-                <Map
+         <div>
+             {console.log("Reached inside Circle ",this.props.data)}
+             <Map
                     google={this.props.google}
-                    zoom={6}
-                    className={mapStyles}
+                    zoom={5}
+                    className = {mapStyles}
                     initialCenter={{ lat: 23.0225, lng: 72.5714 }}
                 >
-
-                </Map>
-            </div>
+              {/* Circle Co-ordinates */}
+                    <Circle
+                        radius={50000}
+                        center={this.props.data}
+                        onMouseover={() => console.log('mouseover')}
+                        onClick={() => console.log('click')}
+                        onMouseout={() => console.log('mouseout')}
+                        strokeColor='transparent'
+                        strokeOpacity={0}
+                        strokeWeight={5}
+                        fillColor='#FF0000'
+                        fillOpacity={0.4}
+                    />
+            </Map>
+         </div>
         )
     }
 }

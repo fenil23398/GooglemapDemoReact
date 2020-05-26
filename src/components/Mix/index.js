@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { Component } from 'react';
 import {
     Map,
     GoogleApiWrapper,
     Marker,
-    InfoWindow
+    InfoWindow,
+    Polygon,
+    Circle
 } from 'google-maps-react';
 
 const mapStyles = {
@@ -11,8 +13,8 @@ const mapStyles = {
     height: '100%',
 };
 
-//Pass Json format which contains details of Markers
-class MarkerComponent extends React.Component {
+class MapMix extends Component {
+
     constructor(props) {
         super(props)
         this.state = {
@@ -53,12 +55,30 @@ class MarkerComponent extends React.Component {
             )
         })
     }
+
+    generateCircle = () => {
+        return this.props.data.map(location => {
+            return (
+                <Circle
+                radius={50000}
+                center={location}
+                onMouseover={() => console.log('mouseover')}
+                onClick={() => console.log('click')}
+                onMouseout={() => console.log('mouseout')}
+                strokeColor='transparent'
+                strokeOpacity={0}
+                strokeWeight={5}
+                fillColor='#FF0000'
+                fillOpacity={0.4}
+            />
+            )
+        })
+    }
+
     render() {
         return (
             <div>
-                <p> Rule 1 : Render method which Traverses Array and Put markers </p>
-                <p> Rule 2 : on Click set active marker so detail will be shown on selected Marker only </p>
-                <p> Rule 3 : Info window will contain data for selected Marker </p>
+               <div>
                 <Map
                     google={this.props.google}
                     zoom={5}
@@ -66,6 +86,7 @@ class MarkerComponent extends React.Component {
                     initialCenter={{ lat: 23.0225, lng: 72.5714 }}
                 >
                     {this.displayMarkers()}
+                    {this.generateCircle()}
                     <InfoWindow
                         marker={this.state.activeMarker}
                         visible={this.state.showingInfoWindow}
@@ -76,14 +97,22 @@ class MarkerComponent extends React.Component {
                             </h1>
                         </div>
                     </InfoWindow>
+                    <Polygon
+                        paths={this.props.data}
+                        strokeColor="#0000FF"
+                        strokeOpacity={0.8}
+                        strokeWeight={2}
+                        fillColor="#0000FF"
+                        fillOpacity={0.35}
+                     />
                 </Map>
+            </div> 
             </div>
         )
     }
 }
 
-
 export default GoogleApiWrapper({
     // apiKey: 'AIzaSyBNQVQPeg0gARKCWhsMpiXKedFvj5XdQX8'
     apiKey: 'AIzaSyBjrlHW0uLCjMrCNSvkWBsM1NX9Q372Mvs'
-})(MarkerComponent);
+})(MapMix);
